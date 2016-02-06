@@ -67,13 +67,19 @@ def custom_heuristic(file_path):
     df = pandas.read_csv(file_path)
     for passenger_index, passenger in df.iterrows():
         passenger_id = passenger['PassengerId']
-
-        cond = passenger['Sex'] == "female"
+        cond = False
+        if passenger['Sex'] == "female":
+        	cond = True
+        	if passenger['Pclass'] == 3 and (passenger['SibSp'] > 0 or passenger['Parch'] > 0):
+        		cond = False
         predictions[passenger_id] = True if cond else False
         
         cond = (passenger['Age'] < 16 and passenger['Pclass'] <= 2)
         predictions[passenger_id] = True if predictions[passenger_id] == True or cond else False   
     
+    	cond = (passenger['Age'] < 5)
+        predictions[passenger_id] = True if predictions[passenger_id] == True or cond else False
+
     predic_list = [survived for id_,survived in predictions.iteritems()]
     df["Predictions"] = pandas.Series(predic_list)
     accuracy = df["Predictions"] == df["Survived"]
